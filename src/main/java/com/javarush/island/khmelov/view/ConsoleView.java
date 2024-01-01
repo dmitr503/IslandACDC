@@ -4,7 +4,7 @@ import com.javarush.island.khmelov.api.view.View;
 import com.javarush.island.khmelov.config.Setting;
 import com.javarush.island.khmelov.entity.map.Cell;
 import com.javarush.island.khmelov.entity.map.GameMap;
-import com.javarush.island.khmelov.entity.map.ResidentMap;
+import com.javarush.island.khmelov.entity.map.Residents;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 
 
 @SuppressWarnings("FieldCanBeLocal")
-public class ColorConsoleView implements View {
+public class ConsoleView implements View {
 
     private final int showRows;
     private final int showCols;
@@ -25,7 +25,7 @@ public class ColorConsoleView implements View {
     private final int cellWidth = Setting.get().getConsoleCellWith();
     private final String border = "═".repeat(cellWidth);
 
-    public ColorConsoleView(GameMap gameMap) {
+    public ConsoleView(GameMap gameMap) {
         this.gameMap = gameMap;
 
         showRows = Setting.get().getShowRows();
@@ -52,7 +52,7 @@ public class ColorConsoleView implements View {
         Cell[][] cells = gameMap.getCells();
         for (Cell[] row : cells) {
             for (Cell cell : row) {
-                ResidentMap residents = cell.getResidents();
+                Residents residents = cell.getResidents();
                 if (Objects.nonNull(residents)) {
                     residents.randomRotateResidents();
                     residents.values().stream()

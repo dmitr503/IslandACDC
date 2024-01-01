@@ -1,8 +1,8 @@
 package com.javarush.island.khmelov.services;
 
+import com.javarush.island.khmelov.api.view.View;
 import com.javarush.island.khmelov.config.Setting;
 import com.javarush.island.khmelov.entity.Game;
-import com.javarush.island.khmelov.api.view.View;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -23,8 +23,8 @@ public class GameWorker extends Thread {
         View view = game.getView();
         view.show();
 
-        @SuppressWarnings("resource")
         ScheduledExecutorService mainPool = Executors.newScheduledThreadPool(CORE_POOL_SIZE);
+
         List<OrganismWorker> workers = game
                 .getEntityFactory()
                 .getAllPrototypes()
@@ -48,5 +48,6 @@ public class GameWorker extends Thread {
         if (servicePool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)) {
             view.show();
         }
+
     }
 }
