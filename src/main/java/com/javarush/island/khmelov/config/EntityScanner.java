@@ -29,7 +29,6 @@ public class EntityScanner {
                         typeData.maxFood() * flockSize,
                         flockSize
                 );
-
                 organisms[index++] = generatePrototype(type, name, icon, limit);
             }
         }

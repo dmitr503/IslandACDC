@@ -16,13 +16,12 @@ public class Grass extends Organism {
 
     @Override
     public boolean spawn(Cell cell) {
-        this.safeChangeWeight(cell, Setting.get().getPercentPlantGrow());
+        this.safeChangeWeight(cell, Setting.get().life.getPercentPlantGrow());
         boolean born = false;
         for (int i = 0; i < 6; i++) {
             Cell neighborCell = cell.getNextCell(Rnd.random(0, 2));
             born |= safePlantPropagation(neighborCell);
         }
-
         return born;
     }
 
@@ -32,7 +31,7 @@ public class Grass extends Organism {
         try {
             Organisms plants = cell.getResidents().get(getType());
             if (plants.size() < limit.getMaxCountInCell() &&
-                    getWeight() > limit.getMaxWeight() / 2
+                getWeight() > limit.getMaxWeight() / 2
             ) {
                 Organism newPlant = Organism.clone(this);
                 double childWeight = getWeight() / 10;

@@ -21,7 +21,7 @@ public abstract class Animal extends Organism implements Eating, Reproducible, M
             return true;
         }
         if (getWeight() > 0) {
-            return safeChangeWeight(currentCell, -1 * Setting.get().getPercentAnimalSlim());
+            return safeChangeWeight(currentCell, -1 * Setting.get().life.getPercentAnimalSlim());
         }
         return !safeDie(currentCell);
     }
@@ -64,6 +64,5 @@ public abstract class Animal extends Organism implements Eating, Reproducible, M
         }
         return false;
     }
-
 
 }

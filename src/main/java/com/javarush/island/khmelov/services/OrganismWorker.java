@@ -4,6 +4,7 @@ import com.javarush.island.khmelov.entity.map.Cell;
 import com.javarush.island.khmelov.entity.map.GameMap;
 import com.javarush.island.khmelov.entity.organizm.Organism;
 import com.javarush.island.khmelov.entity.organizm.Organisms;
+import com.javarush.island.khmelov.exception.GameException;
 
 import java.util.Objects;
 import java.util.Queue;
@@ -12,6 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class OrganismWorker implements Runnable {
 
     private final Organism prototype;
+    private String type;
     private final GameMap gameMap;
     private final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
 
@@ -22,23 +24,23 @@ public class OrganismWorker implements Runnable {
 
     @Override
     public void run() {
+        type = prototype.getType();
         Cell[][] cells = gameMap.getCells();
-        for (Cell[] row : cells) {
+        for (int i = 0, rowsCount = cells.length; i < rowsCount; i++) {
+            Cell[] row = cells[(i + hashCode()) % rowsCount];
             for (Cell cell : row) {
                 try {
-                    processOneCell(cell);
+                    if (!cell.getResidents().get(type).isEmpty()) {
+                        processOneCell(cell);
+                    }
                 } catch (Exception e) {
-                    //TODO replace it -> throw...
-                    e.printStackTrace();
-                    System.err.println("OMG. Debug it!");
-                    System.exit(0);
+                    throw new GameException("Debug it!", e);
                 }
             }
         }
     }
 
     private void processOneCell(Cell cell) {
-        String type = prototype.getType();
         Organisms organisms = cell.getResidents().get(type);
         if (Objects.nonNull(organisms)) {
             //build tasks (need correct iteration, without any modification)

@@ -22,7 +22,6 @@ public class Task {
                 animal.spawn(cell);
             }
             animal.move(cell);
-
         } else {
             organism.spawn(cell);
         }

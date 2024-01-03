@@ -1,12 +1,13 @@
-package com.javarush.island.khmelov.view;
+package com.javarush.island.khmelov.view.console;
 
 import com.javarush.island.khmelov.api.view.View;
 import com.javarush.island.khmelov.config.Setting;
 import com.javarush.island.khmelov.entity.map.Cell;
 import com.javarush.island.khmelov.entity.map.GameMap;
-import com.javarush.island.khmelov.entity.map.Residents;
+import com.javarush.island.khmelov.entity.organizm.Organism;
 
-import java.util.*;
+import java.util.Map;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,18 +23,18 @@ public class ConsoleView implements View {
     private final boolean cutCols;
 
     private final GameMap gameMap;
-    private final int cellWidth = Setting.get().getConsoleCellWith();
+    private final int cellWidth = Setting.get().console.getConsoleCellWith();
     private final String border = "═".repeat(cellWidth);
 
     public ConsoleView(GameMap gameMap) {
         this.gameMap = gameMap;
 
-        showRows = Setting.get().getShowRows();
+        showRows = Setting.get().console.getShowRows();
         rows = gameMap.getRows();
         cutRows = rows > showRows;
         rows = cutRows ? showRows : rows;
 
-        showCols = Setting.get().getShowCols();
+        showCols = Setting.get().console.getShowCols();
         cols = gameMap.getCols();
         cutCols = cols > showCols;
         cols = cutCols ? showCols : cols;
@@ -47,26 +48,7 @@ public class ConsoleView implements View {
 
     @Override
     public String showStatistics() {
-        Map<String, Double> rawStatistics = new HashMap<>();
-        Map<String, Long> statistics = new TreeMap<>();
-        Cell[][] cells = gameMap.getCells();
-        for (Cell[] row : cells) {
-            for (Cell cell : row) {
-                Residents residents = cell.getResidents();
-                if (Objects.nonNull(residents)) {
-                    residents.randomRotateResidents();
-                    residents.values().stream()
-                            .filter(organisms -> !organisms.isEmpty())
-                            .forEach(organisms -> {
-                                        String icon = organisms.getIcon();
-                                        double count = organisms.calculateSize();
-                                        rawStatistics.put(icon, rawStatistics.getOrDefault(icon, 0D) + count);
-                                    }
-                            );
-                }
-            }
-        }
-        rawStatistics.forEach((key, value) -> statistics.put(key, (long) Math.ceil(value)));
+        Map<Organism, Long> statistics = gameMap.getStatistics();
         return statistics + "\n";
     }
 

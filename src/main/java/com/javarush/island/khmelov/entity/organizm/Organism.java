@@ -12,6 +12,7 @@ import lombok.Setter;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings("unused")
@@ -20,20 +21,24 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class Organism implements Reproducible, Cloneable {
 
     private final static AtomicLong idCounter = new AtomicLong(System.currentTimeMillis());
+    private final Set<Map.Entry<String, Integer>> foodMap;
+
+    private long id = idCounter.incrementAndGet();
+
+    private final String type = this.getClass().getSimpleName();
+    private final String name;
+    private final String icon;
 
     public Organism(String name, String icon, Limit limit) {
         this.name = name;
         this.icon = icon;
         this.limit = limit;
         weight = Rnd.random(limit.getMaxWeight() / 2, limit.getMaxWeight());
+        Setting setting = Setting.get();
+        foodMap = setting
+                .getFoodMap(getType())
+                .entrySet();
     }
-
-    private long id = idCounter.incrementAndGet();
-    private final String type = this
-            .getClass()
-            .getSimpleName();
-    private final String name;
-    private final String icon;
 
     private transient final String letter = type.substring(0, 1);
     @Setter
@@ -137,10 +142,7 @@ public abstract class Organism implements Reproducible, Cloneable {
         try {
             double needFood = getNeedFood();
             if (!(needFood <= 0)) {
-                Setting setting = Setting.get();
-                var foodMap = setting
-                        .getFoodMap(getType())
-                        .entrySet();
+
                 var foodIterator = foodMap.iterator();
                 while (needFood > 0 && foodIterator.hasNext()) {
                     Map.Entry<String, Integer> entry = foodIterator.next();

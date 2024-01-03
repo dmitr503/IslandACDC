@@ -27,7 +27,7 @@ import java.util.Objects;
 @Setter(AccessLevel.PROTECTED)
 public class Setting {
 
-    public static final String SETTING_YAML = "khmelov/setting.yaml";
+    public static final String SETTING_YAML = "/khmelov/setting.yaml";
     private static final Class<?>[] TYPES = {
             Wolf.class, Bear.class,
             Horse.class, Mouse.class, Deer.class, Rabbit.class,
@@ -52,16 +52,10 @@ public class Setting {
 
 
     //=============================== DATA ========================================
+    public final Life life = new Life();
+    public final Console console = new Console();
+    public final Window window = new Window();
 
-    private int period;
-    private int rows;
-    private int cols;
-
-    private int showRows;
-    private int showCols;
-    private int consoleCellWith;
-    private int percentAnimalSlim;
-    private int percentPlantGrow;
     @Getter(AccessLevel.PROTECTED)
     private Map<String, Map<String, Integer>> foodMap = new LinkedHashMap<>();
 
@@ -79,16 +73,6 @@ public class Setting {
     }
 
     private void loadFromDefault() {
-        period = Default.PERIOD;
-
-        rows = Default.ROWS;
-        cols = Default.COLS;
-
-        showRows = Default.SHOW_ROWS;
-        showCols = Default.SHOW_COLS;
-        consoleCellWith = Default.CONSOLE_CELL_WITH;
-        percentAnimalSlim = Default.PERCENT_ANIMAL_SLIM;
-        percentPlantGrow = Default.PERCENT_PLANT_GROW;
         for (int i = 0, n = Default.names.length; i < n; i++) {
             String key = Default.names[i];
             this.foodMap.putIfAbsent(key, new LinkedHashMap<>());
@@ -105,7 +89,7 @@ public class Setting {
     private void updateFromYaml() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         ObjectReader readerForUpdating = mapper.readerForUpdating(this);
-        URL resource = Setting.class.getClassLoader().getResource(SETTING_YAML);
+        URL resource = Setting.class.getResource(SETTING_YAML);
         if (Objects.nonNull(resource)) {
             readerForUpdating.readValue(resource.openStream());
         }
