@@ -14,6 +14,7 @@ public class Default {
     public static final int PERCENT_PLANT_GROW = 15;
     public static final int WINDOW_WIDTH = 1024;
     public static final int WINDOW_HEIGHT = 800;
+    public static final int WINDOW_CELL_WITH = 4;
     @JsonIgnore
     static final String[] names = {
             "Wolf", "Boa", "Fox", "Bear", "Eagle",

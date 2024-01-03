@@ -2,6 +2,7 @@ package com.javarush.island.khmelov.view.javafx;
 
 import com.javarush.island.khmelov.api.view.View;
 import com.javarush.island.khmelov.config.Setting;
+import com.javarush.island.khmelov.config.Window;
 import com.javarush.island.khmelov.entity.Game;
 import com.javarush.island.khmelov.entity.map.Cell;
 import com.javarush.island.khmelov.entity.organizm.Organisms;
@@ -24,13 +25,18 @@ public class JavaFxView extends Application implements View {
     private int rows;
     private int cols;
     private Label[][] viewMap;
-    private final StringBuilder mapOut = new StringBuilder("empty");
+    private final StringBuilder mapOut = new StringBuilder();
 
-    private final static int cellWidth = 4;
+    private int cellWidth;
     private Label statistics;
+    private int statWidth;
+    private int width;
+    private int height;
 
-    public JavaFxView() {
-        System.out.println("test");
+    public static void launchFxWindow(GameWorker gameWorker) {
+        JavaFxView.gameWorker = gameWorker; //send to init(...) and start(...)
+        launch();
+        gameWorker.getGame().setFinished(true);
     }
 
     @Override
@@ -38,27 +44,33 @@ public class JavaFxView extends Application implements View {
         game = gameWorker.getGame();
         rows = game.getGameMap().getRows();
         cols = game.getGameMap().getCols();
+
+        Window window = Setting.get().window;
+        statWidth = 200;
+        cellWidth = window.getCellWidth();
+        width = window.getWidth();
+        height = window.getHeight();
     }
 
     @Override
     public void start(Stage primaryStage) {
 
-        int width = Setting.get().window.getWidth();
-        int height = Setting.get().window.getHeight();
-
         GridPane gameMapPane = new GridPane();
         gameMapPane.setPrefHeight(height);
+        gameMapPane.setPrefWidth(width - statWidth);
 
         viewMap = new Label[rows][cols];
 
         for (int i = 0; i < cols; i++) {
             ColumnConstraints col = new ColumnConstraints();
-            col.setPercentWidth(100d/cols);
+            col.setPercentWidth(100d / cols);
+            col.setHgrow(Priority.NEVER);
             gameMapPane.getColumnConstraints().add(col);
         }
+
         for (int i = 0; i < rows; i++) {
             RowConstraints row = new RowConstraints();
-            row.setPercentHeight(100d/rows);
+            row.setPercentHeight(100d / rows);
             row.setVgrow(Priority.NEVER);
             gameMapPane.getRowConstraints().add(row);
         }
@@ -67,31 +79,26 @@ public class JavaFxView extends Application implements View {
         for (int i = 0, mapLength = viewMap.length; i < mapLength; i++) {
             for (int j = 0; j < viewMap[i].length; j++) {
                 Label label = new Label(i + "|" + j);
-                Font font = Font.font( 15); // создаем объект класса Font
-                label.setFont(font);
+                label.setFont(Font.font(15));
                 label.setWrapText(true);
                 viewMap[i][j] = label;
                 gameMapPane.add(viewMap[i][j], j, i);
             }
         }
 
-
         statistics = new Label();
-        Font font = Font.font( 22); // создаем объект класса Font
-        statistics.setFont(font);
-        VBox vBox = new VBox(gameMapPane, statistics);
+        statistics.setWrapText(true);
+        statistics.setFont(Font.font(18));
+        statistics.setMaxWidth(statWidth);
+        statistics.setMinWidth(statWidth);
 
-        Scene scene = new Scene(vBox, width, height);
+        HBox hBox = new HBox(gameMapPane, statistics);
+
+        Scene scene = new Scene(hBox, width, height);
         primaryStage.setScene(scene);
         primaryStage.show();
-        game.setView(this);
+        game.setView(this); //view complete, send to game.
         Platform.runLater(gameWorker);
-    }
-
-    public static void start(GameWorker gameWorker) {
-        JavaFxView.gameWorker = gameWorker;
-        launch();
-        gameWorker.getGame().setFinished(true);
     }
 
     @Override
@@ -103,8 +110,13 @@ public class JavaFxView extends Application implements View {
 
     @Override
     public String showStatistics() {
-        String text = game.getGameMap().getStatistics().toString();
-        Platform.runLater(()->statistics.setText(text));
+        String text = game.getGameMap()
+                .getStatistics()
+                .entrySet()
+                .stream()
+                .map(e -> e.getKey().getIcon() + "(" + e.getKey().getName() + "): " + e.getValue())
+                .collect(Collectors.joining("\n"));
+        Platform.runLater(() -> statistics.setText(text));
         return text;
     }
 

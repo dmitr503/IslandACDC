@@ -8,7 +8,7 @@ life:
 
 console:
     showRows: 6
-    showCols: 25
+    showCols: 20
     consoleCellWith: 4
 
 window:

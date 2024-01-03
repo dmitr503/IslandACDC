@@ -1,6 +1,7 @@
 package com.javarush.island.khmelov.view.console;
 
 import com.javarush.island.khmelov.api.view.View;
+import com.javarush.island.khmelov.config.Console;
 import com.javarush.island.khmelov.config.Setting;
 import com.javarush.island.khmelov.entity.map.Cell;
 import com.javarush.island.khmelov.entity.map.GameMap;
@@ -11,45 +12,59 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.javarush.island.khmelov.view.console.Symbols.*;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class ConsoleView implements View {
 
-    private final int showRows;
-    private final int showCols;
     private int rows;
     private int cols;
     private final boolean cutRows;
     private final boolean cutCols;
 
     private final GameMap gameMap;
-    private final int cellWidth = Setting.get().console.getConsoleCellWith();
-    private final String border = "═".repeat(cellWidth);
+    private final int cellWidth;
+    private final String border;
+    private final String topBorder;
+    private final String centerBorder;
+    private final String bottomBorder;
+    private final String bottomInfBorder;
 
     public ConsoleView(GameMap gameMap) {
+        final Console console = Setting.get().console;
         this.gameMap = gameMap;
 
-        showRows = Setting.get().console.getShowRows();
+        cellWidth = console.getConsoleCellWith();
+        border = "═".repeat(cellWidth);
+
+        int showRows = console.getShowRows();
         rows = gameMap.getRows();
         cutRows = rows > showRows;
         rows = cutRows ? showRows : rows;
 
-        showCols = Setting.get().console.getShowCols();
+        int showCols = console.getShowCols();
         cols = gameMap.getCols();
         cutCols = cols > showCols;
         cols = cutCols ? showCols : cols;
+
+        topBorder = border(cols, LEFT_TOP, TOP, RIGHT_TOP);
+        centerBorder = border(cols, LEFT, CENTER, RIGHT);
+        bottomBorder = border(cols, LEFT_BOTTOM, CENTER_BOTTOM, RIGHT_BOTTOM);
+        bottomInfBorder = String.valueOf(INF_MARGIN).repeat(((cellWidth + 1) * showCols) + 1);
     }
 
 
     @Override
     public void show() {
-        System.out.println(showScale() + showMap() + showStatistics());
+        synchronized (System.out) {
+            System.out.println("\n\n" + showMap() + showStatistics() + showScale());
+            System.out.flush();
+        }
     }
 
     @Override
     public String showStatistics() {
         Map<Organism, Long> statistics = gameMap.getStatistics();
-        return statistics + "\n";
+        return statistics + LINE_BREAK;
     }
 
     @Override
@@ -60,7 +75,7 @@ public class ConsoleView implements View {
             String color = Color.getColor(i, n);
             joiner.add(color + i + "%" + Color.RESET);
         }
-        return "Scale: " + joiner + "\n";
+        return "Scale: " + joiner + LINE_BREAK;
     }
 
     @Override
@@ -68,38 +83,27 @@ public class ConsoleView implements View {
         StringBuilder out = new StringBuilder();
         Cell[][] cells = gameMap.getCells();
         for (int row = 0; row < rows; row++) {
-            out.append(row == 0
-                    ? line(cols, Symbols.LEFT_TOP, Symbols.TOP, Symbols.RIGHT_TOP)
-                    : line(cols, Symbols.LEFT, Symbols.CENTER, Symbols.RIGHT)
-            ).append("\n");
+            out.append(row == 0 ? topBorder : centerBorder).append(LINE_BREAK);
             for (int col = 0; col < cols; col++) {
-                String residentSting = get(cells[row][col]);
-                out.append(String.format(Symbols.CELL_MARGIN + "%-" + cellWidth + "s", residentSting));
+                String residentSting = getResidentSting(cells[row][col]);
+                out.append(String.format(CELL_MARGIN + "%-" + cellWidth + "s", residentSting));
             }
-            out.append(cutCols ? Symbols.INF_MARGIN : Symbols.CELL_MARGIN)
-                    .append("\n");
+            out.append(cutCols ? INF_MARGIN : CELL_MARGIN).append(LINE_BREAK);
         }
-        if (!cutCols) {
-            out.append(line(cols, Symbols.LEFT_BOTTOM, Symbols.CENTER_BOTTOM, Symbols.RIGHT_BOTTOM))
-                    .append("\n");
-        } else {
-            out.append(String.valueOf(Symbols.INF_MARGIN).repeat(((cellWidth + 1) * showCols) + 1))
-                    .append("\n");
-        }
+        out.append(cutRows ? bottomInfBorder : bottomBorder).append(LINE_BREAK);
         return out.toString();
     }
 
-    private String get(Cell cell) {
+    private String getResidentSting(Cell cell) {
         cell.getLock().lock();
         String collect = cell.getResidents().values().stream()
                 .filter((list) -> !list.isEmpty())
                 .sorted((o1, o2) -> o2.size() - o1.size())
                 .limit(cellWidth)
-                .map(organisms -> {
-                    int maxCount = organisms.getLimit().getMaxCountInCell();
-                    String color = Color.getColor(organisms.size(), maxCount);
-                    return color + organisms.getLetter() + Color.RESET;
-                })
+                .map(organisms -> Color.getColor(organisms.size(), organisms.getLimit().getMaxCountInCell())
+                                  + organisms.getLetter()
+                                  + Color.RESET
+                )
                 .map(Object::toString)
                 .collect(Collectors.joining());
         long count = cell
@@ -109,15 +113,15 @@ public class ConsoleView implements View {
                 .filter((list) -> !list.isEmpty())
                 .limit(cellWidth)
                 .count();
-        String blank = count < cellWidth ? ".".repeat((int) (cellWidth - count)) : "";
+        String blank = count < cellWidth ? DOT.repeat((int) (cellWidth - count)) : BLANK;
         cell.getLock().unlock();
         return collect + blank;
     }
 
-    private String line(int cols, char left, char center, char right) {
-        right = cutCols ? Symbols.INF_MARGIN : right;
+    private String border(int cols, char left, char center, char right) {
+        right = cutCols ? INF_MARGIN : right;
         return (IntStream.range(0, cols)
                 .mapToObj(col -> (col == 0 ? left : center) + border)
-                .collect(Collectors.joining("", "", String.valueOf(right))));
+                .collect(Collectors.joining(BLANK, BLANK, String.valueOf(right))));
     }
 }

@@ -12,4 +12,7 @@ public class Symbols {
     public static final char RIGHT_BOTTOM = '╝';
     public static final char CELL_MARGIN = '║';
     public static final char INF_MARGIN = '#';
+    public static final String BLANK = "";
+    public static final String DOT = ".";
+    public static final String LINE_BREAK = "\n";
 }

@@ -16,9 +16,9 @@ public class JavaFxRunner {
         GameMapCreator gameMapCreator = new GameMapCreator(entityFactory);
         int rows = Setting.get().life.getRows();
         int cols = Setting.get().life.getCols();
-        GameMap gameMap = gameMapCreator.createRandomFilledGameMap(rows, cols, 1.2);
+        GameMap gameMap = gameMapCreator.createRandomFilledGameMap(rows, cols, 2);
         Game game = new Game(gameMap, entityFactory, null);
         GameWorker gameWorker = new GameWorker(game);
-        JavaFxView.start(gameWorker);
+        JavaFxView.launchFxWindow(gameWorker);
     }
 }

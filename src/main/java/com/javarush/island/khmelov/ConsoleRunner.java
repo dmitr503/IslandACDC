@@ -16,7 +16,7 @@ public class ConsoleRunner {
         GameMapCreator gameMapCreator = new GameMapCreator(entityFactory);
         int rows = Setting.get().life.getRows();
         int cols = Setting.get().life.getCols();
-        GameMap gameMap = gameMapCreator.createRandomFilledGameMap(rows, cols, 1.2);
+        GameMap gameMap = gameMapCreator.createRandomFilledGameMap(rows, cols, 50);
         View view = new ConsoleView(gameMap);
         Game game = new Game(gameMap, entityFactory, view);
         GameWorker gameWorker = new GameWorker(game);

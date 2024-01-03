@@ -5,6 +5,7 @@ import com.javarush.island.khmelov.entity.organizm.Organism;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,10 +17,7 @@ public class GameMap {
 
     public GameMap(int rows, int cols) {
         this.cells = new Cell[rows][cols];
-        statistics = new HashMap<>();
-        for (Organism organism : Setting.PROTOTYPES) {
-            statistics.put(organism, 0L);
-        }
+        statistics = new LinkedHashMap<>();
     }
 
     public int getRows() {
@@ -50,10 +48,13 @@ public class GameMap {
                 }
             }
         }
-        for (Organism key : statistics.keySet()) {
-            rawStatistics.putIfAbsent(key.getIcon(), 0d);
-            Double count = rawStatistics.get(key.getIcon());
-            statistics.put(key, (long) Math.ceil(count));
+        for (Organism organism : Setting.PROTOTYPES) {
+            long count = (long) Math.ceil(rawStatistics.getOrDefault(organism.getIcon(), 0d));
+            if (count > 0) {
+                statistics.put(organism,count);
+            } else {
+                statistics.remove(organism);
+            }
         }
     }
 
