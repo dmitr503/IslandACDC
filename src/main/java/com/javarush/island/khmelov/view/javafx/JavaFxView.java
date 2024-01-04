@@ -17,37 +17,38 @@ import javafx.stage.Stage;
 
 import java.util.stream.Collectors;
 
+//TODO need refactoring (spaghetti-code).
 public class JavaFxView extends Application implements View {
 
     private static GameWorker gameWorker;
 
-    private Game game;
-    private int rows;
-    private int cols;
-    private Label[][] viewMap;
+    private final int rows;
+    private final int cols;
+    private final Game game;
     private final StringBuilder mapOut = new StringBuilder();
 
-    private int cellWidth;
+    private final int cellIconCount;
+    private final int statWidth;
+    private final int width;
+    private final int height;
+
+    private Label[][] viewMap;
     private Label statistics;
-    private int statWidth;
-    private int width;
-    private int height;
 
     public static void launchFxWindow(GameWorker gameWorker) {
-        JavaFxView.gameWorker = gameWorker; //send to init(...) and start(...)
+        JavaFxView.gameWorker = gameWorker; //send to new JavaFxView() and start(...)
         launch();
         gameWorker.getGame().setFinished(true);
     }
 
-    @Override
-    public void init() {
+    public JavaFxView() {
         game = gameWorker.getGame();
         rows = game.getGameMap().getRows();
         cols = game.getGameMap().getCols();
 
         Window window = Setting.get().window;
         statWidth = 200;
-        cellWidth = window.getCellWidth();
+        cellIconCount = window.getCellIconCount();
         width = window.getWidth();
         height = window.getHeight();
     }
@@ -64,7 +65,7 @@ public class JavaFxView extends Application implements View {
         for (int i = 0; i < cols; i++) {
             ColumnConstraints col = new ColumnConstraints();
             col.setPercentWidth(100d / cols);
-            col.setHgrow(Priority.NEVER);
+            col.setHgrow(Priority.ALWAYS);
             gameMapPane.getColumnConstraints().add(col);
         }
 
@@ -97,8 +98,8 @@ public class JavaFxView extends Application implements View {
         Scene scene = new Scene(hBox, width, height);
         primaryStage.setScene(scene);
         primaryStage.show();
-        game.setView(this); //view complete, send to game.
-        Platform.runLater(gameWorker);
+        game.setView(this); //view complete, set callback in game.
+        Platform.runLater(gameWorker); //and run game
     }
 
     @Override
@@ -136,20 +137,21 @@ public class JavaFxView extends Application implements View {
         Cell[][] cells = game.getGameMap().getCells();
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
-                String text = get(cells[i][j]);
-                mapOut.append(text).append(j < cells[i].length - 1 ? "|" : "\n");
+                String text = getIcons(cells[i][j]);
                 viewMap[i][j].setText(text);
+                mapOut.append(text+"  ",0,2);
             }
+            mapOut.append("\n");
         }
     }
 
-    private String get(Cell cell) {
+    private String getIcons(Cell cell) {
         try {
             cell.getLock().lock();
             return cell.getResidents().values().stream()
                     .filter((list) -> !list.isEmpty())
                     .sorted((o1, o2) -> o2.size() - o1.size())
-                    .limit(cellWidth)
+                    .limit(cellIconCount)
                     .map(Organisms::getIcon)
                     .collect(Collectors.joining());
         } finally {

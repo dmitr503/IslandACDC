@@ -22,7 +22,7 @@ public class ConsoleView implements View {
     private final boolean cutCols;
 
     private final GameMap gameMap;
-    private final int cellWidth;
+    private final int cellCharCount;
     private final String border;
     private final String topBorder;
     private final String centerBorder;
@@ -33,8 +33,8 @@ public class ConsoleView implements View {
         final Console console = Setting.get().console;
         this.gameMap = gameMap;
 
-        cellWidth = console.getConsoleCellWith();
-        border = "═".repeat(cellWidth);
+        cellCharCount = console.getCellCharCount();
+        border = "═".repeat(cellCharCount);
 
         int showRows = console.getShowRows();
         rows = gameMap.getRows();
@@ -49,7 +49,7 @@ public class ConsoleView implements View {
         topBorder = border(cols, LEFT_TOP, TOP, RIGHT_TOP);
         centerBorder = border(cols, LEFT, CENTER, RIGHT);
         bottomBorder = border(cols, LEFT_BOTTOM, CENTER_BOTTOM, RIGHT_BOTTOM);
-        bottomInfBorder = String.valueOf(INF_MARGIN).repeat(((cellWidth + 1) * showCols) + 1);
+        bottomInfBorder = String.valueOf(INF_MARGIN).repeat(((cellCharCount + 1) * showCols) + 1);
     }
 
 
@@ -86,7 +86,7 @@ public class ConsoleView implements View {
             out.append(row == 0 ? topBorder : centerBorder).append(LINE_BREAK);
             for (int col = 0; col < cols; col++) {
                 String residentSting = getResidentSting(cells[row][col]);
-                out.append(String.format(CELL_MARGIN + "%-" + cellWidth + "s", residentSting));
+                out.append(String.format(CELL_MARGIN + "%-" + cellCharCount + "s", residentSting));
             }
             out.append(cutCols ? INF_MARGIN : CELL_MARGIN).append(LINE_BREAK);
         }
@@ -99,7 +99,7 @@ public class ConsoleView implements View {
         String collect = cell.getResidents().values().stream()
                 .filter((list) -> !list.isEmpty())
                 .sorted((o1, o2) -> o2.size() - o1.size())
-                .limit(cellWidth)
+                .limit(cellCharCount)
                 .map(organisms -> Color.getColor(organisms.size(), organisms.getLimit().getMaxCountInCell())
                                   + organisms.getLetter()
                                   + Color.RESET
@@ -111,9 +111,9 @@ public class ConsoleView implements View {
                 .values()
                 .stream()
                 .filter((list) -> !list.isEmpty())
-                .limit(cellWidth)
+                .limit(cellCharCount)
                 .count();
-        String blank = count < cellWidth ? DOT.repeat((int) (cellWidth - count)) : BLANK;
+        String blank = count < cellCharCount ? DOT.repeat((int) (cellCharCount - count)) : BLANK;
         cell.getLock().unlock();
         return collect + blank;
     }

@@ -29,12 +29,12 @@ public class Setting {
 
     public static final String SETTING_YAML = "/khmelov/setting.yaml";
     private static final Class<?>[] TYPES = {
-            Wolf.class, Bear.class,
-            Horse.class, Mouse.class, Deer.class, Rabbit.class,
+            Wolf.class, Bear.class, //.....
+            Horse.class, Mouse.class, Deer.class, Rabbit.class, //.....
             Grass.class,};
     public static final Organism[] PROTOTYPES = EntityScanner.createPrototypes(TYPES);
 
-    //======================== SAFE_THREAD_SINGLETON =============================
+    //======================== <SAFE_THREAD_SINGLETON> =============================
     private static volatile Setting SETTING;
 
     public static Setting get() {
@@ -48,10 +48,10 @@ public class Setting {
         }
         return setting;
     }
-    //======================== /SAFE_THREAD_SINGLETON =============================
+    //======================== </SAFE_THREAD_SINGLETON> =============================
 
 
-    //=============================== DATA ========================================
+    //================================ <DATA> =======================================
     public final Life life = new Life();
     public final Console console = new Console();
     public final Window window = new Window();
@@ -63,9 +63,9 @@ public class Setting {
         this.foodMap.putIfAbsent(keyName, new LinkedHashMap<>());
         return foodMap.get(keyName);
     }
-    //=============================== /DATA ========================================
+    //================================ </DATA> =======================================
 
-    //================================ INIT ========================================
+    //================================ <INIT> ========================================
 
     private Setting() {
         loadFromDefault();
@@ -94,9 +94,9 @@ public class Setting {
             readerForUpdating.readValue(resource.openStream());
         }
     }
-    //=============================== /INIT ========================================
+    //=============================== </INIT> ========================================
 
-    //=============================== FOR DEBUG ONLY ===============================
+    //=============================== <FOR DEBUG ONLY> ===============================
     @Override
     public String toString() {
         ObjectMapper yaml = new ObjectMapper(new YAMLFactory());
@@ -107,5 +107,5 @@ public class Setting {
             throw new RuntimeException(e);
         }
     }
-    //=============================== /FOR DEBUG ONLY===============================
+    //=============================== </FOR DEBUG ONLY> ===============================
 }

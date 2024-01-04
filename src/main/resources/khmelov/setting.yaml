@@ -4,16 +4,17 @@ life:
   rows: 20
   cols: 25
   percentAnimalSlim: 15
-  percentPlantGrow: 3
+  percentPlantGrow: 5
 
 console:
     showRows: 6
     showCols: 20
-    consoleCellWith: 4
+    cellCharCount: 4
 
 window:
   width: 1400
   height: 800
+  cellIconCount: 4
 
 foodMap:
   Wolf:

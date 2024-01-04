@@ -9,5 +9,5 @@ import lombok.Setter;
 public class Window {
     int width = Default.WINDOW_WIDTH;
     int height = Default.WINDOW_HEIGHT;
-    int cellWidth = Default.WINDOW_CELL_WITH;
+    int cellIconCount = Default.WINDOW_CELL_ICON_COUNT;
 }

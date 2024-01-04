@@ -9,5 +9,5 @@ import lombok.Setter;
 public class Console {
     int showRows = Default.CONSOLE_SHOW_ROWS;
     int showCols = Default.CONSILE_SHOW_COLS;
-    int consoleCellWith = Default.CONSOLE_CELL_WITH;
+    int cellCharCount = Default.CONSOLE_CELL_CHAR_COUNT;
 }
