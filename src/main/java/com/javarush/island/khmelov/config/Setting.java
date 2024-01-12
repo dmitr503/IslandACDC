@@ -6,12 +6,8 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.javarush.island.khmelov.entity.organizm.Organism;
-import com.javarush.island.khmelov.entity.organizm.animals.herbivores.Deer;
-import com.javarush.island.khmelov.entity.organizm.animals.herbivores.Horse;
-import com.javarush.island.khmelov.entity.organizm.animals.herbivores.Mouse;
-import com.javarush.island.khmelov.entity.organizm.animals.herbivores.Rabbit;
-import com.javarush.island.khmelov.entity.organizm.animals.predators.Bear;
-import com.javarush.island.khmelov.entity.organizm.animals.predators.Wolf;
+import com.javarush.island.khmelov.entity.organizm.animals.herbivores.*;
+import com.javarush.island.khmelov.entity.organizm.animals.predators.*;
 import com.javarush.island.khmelov.entity.organizm.plants.Grass;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,8 +25,9 @@ public class Setting {
 
     public static final String SETTING_YAML = "/khmelov/setting.yaml";
     private static final Class<?>[] TYPES = {
-            Wolf.class, Bear.class, //.....
-            Horse.class, Mouse.class, Deer.class, Rabbit.class, //.....
+            Wolf.class, Bear.class, Boar.class, Boa.class, Fox.class, Eagle.class, //.....
+            Horse.class, Mouse.class, Deer.class, Rabbit.class,
+            Goat.class, Sheep.class, Buffalo.class, Duck.class, Caterpillar.class, //.....
             Grass.class,};
     public static final Organism[] PROTOTYPES = EntityScanner.createPrototypes(TYPES);
 
