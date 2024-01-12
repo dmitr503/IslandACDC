@@ -1,4 +1,4 @@
-package com.javarush.island.khmelov.view.console;
+package com.javarush.island.khmelov.view;
 
 public class Symbols {
     public static final char LEFT_TOP = '╔';
@@ -12,7 +12,4 @@ public class Symbols {
     public static final char RIGHT_BOTTOM = '╝';
     public static final char CELL_MARGIN = '║';
     public static final char INF_MARGIN = '#';
-    public static final String BLANK = "";
-    public static final String DOT = ".";
-    public static final String LINE_BREAK = "\n";
 }

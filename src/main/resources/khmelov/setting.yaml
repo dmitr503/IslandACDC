@@ -1,27 +1,18 @@
 ---
-life:
-  period: 200
-  rows: 20
-  cols: 25
-  percentAnimalSlim: 5
-  percentPlantGrow: 22
-
-console:
-    showRows: 6
-    showCols: 20
-    cellCharCount: 4
-
-window:
-  width: 1400
-  height: 800
-  cellIconCount: 4
-
+period: 500
+rows: 20
+cols: 100
+showRows: 5
+showCols: 40
+consoleCellWith: 2
+percentAnimalSlim: 5
+percentPlantGrow: 25
 foodMap:
   Wolf:
-    Horse: 80
+    Horse: 50
     Deer: 15
     Rabbit: 60
-    Mouse: 70
+    Mouse: 80
     Goat: 60
     Sheep: 70
     Boar: 15

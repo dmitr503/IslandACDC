@@ -12,17 +12,15 @@ public class GameMapCreator {
     }
 
     public GameMap createRandomFilledGameMap(int rows, int cols) {
-        return createRandomFilledGameMap(rows, cols, 33d);
+        return createRandomFilledGameMap(rows, cols, false);
     }
 
-    public GameMap createRandomFilledGameMap(int rows, int cols, double percentProbably) {
+    public GameMap createRandomFilledGameMap(int rows, int cols, boolean empty) {
         GameMap gameMap = new GameMap(rows, cols);
         Cell[][] cells = gameMap.getCells();
         for (int row = 0; row < cells.length; row++) {
             for (int col = 0; col < cells[row].length; col++) {
-                Cell cell = new Cell();
-                entityFactory.fill(cell, percentProbably);
-                cells[row][col] = cell;
+                cells[row][col] = entityFactory.createRandomCell(empty);
             }
         }
         for (int row = 0; row < cells.length; row++) {
